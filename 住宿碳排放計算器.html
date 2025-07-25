@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>旅客住宿碳排計算器</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 600px; }
+    label { display: block; margin-top: 15px; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px; width: 100%; background: #28a745; color: white; border: none; font-size: 16px; }
+    .result { margin-top: 30px; padding: 15px; background: #f1f1f1; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+  <h1>🏨 旅客住宿碳排放計算器</h1>
+
+  <label>住宿天數</label>
+  <input type="number" id="nights" value="1">
+
+  <label>房間數</label>
+  <input type="number" id="rooms" value="1">
+
+  <label>每房每日用電量 (kWh)</label>
+  <input type="number" id="electricity" value="15">
+
+  <label>每房每日用水量 (公噸)</label>
+  <input type="number" id="water" value="0.5">
+
+  <label>是否提供洗衣服務</label>
+  <select id="laundry">
+    <option value="yes">是</option>
+    <option value="no" selected>否</option>
+  </select>
+
+  <label>是否每日更換毛巾</label>
+  <select id="towels">
+    <option value="yes" selected>是</option>
+    <option value="no">否</option>
+  </select>
+
+  <label>每房每日垃圾產出 (公斤)</label>
+  <input type="number" id="waste" value="1.5">
+
+  <button onclick="calculate()">計算碳排量</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function calculate() {
+      let nights = parseFloat(document.getElementById('nights').value);
+      let rooms = parseFloat(document.getElementById('rooms').value);
+      let electricity = parseFloat(document.getElementById('electricity').value);
+      let water = parseFloat(document.getElementById('water').value);
+      let laundry = document.getElementById('laundry').value;
+      let towels = document.getElementById('towels').value;
+      let waste = parseFloat(document.getElementById('waste').value);
+
+      let electricityEmission = electricity * 0.502;
+      let waterEmission = water * 0.344;
+      let wasteEmission = (waste * 115) / 1000;
+
+      let laundryEmission = (laundry === "yes") ? 0.5 : 0;
+      let towelEmission = (towels === "yes") ? 0.3 : 0;
+
+      let dailyPerRoom = electricityEmission + waterEmission + wasteEmission + laundryEmission + towelEmission;
+      let totalEmission = dailyPerRoom * rooms * nights;
+      let perPersonPerNight = dailyPerRoom;
+
+      document.getElementById("output").innerHTML =
+        `<strong>✨ 總碳排放量：</strong> ${totalEmission.toFixed(2)} kg CO₂e<br>
+         <strong>🌍 每人每晚碳排放：</strong> ${perPersonPerNight.toFixed(2)} kg CO₂e<br><br>
+         <em>提示：選擇不更換毛巾、減少洗衣可有效降低排碳。</em>`;
+    }
+  </script>
+
+</body>
+</html>
